@@ -33,11 +33,17 @@ fn main() {
 
         println!("processing part #{}: {}", i, part);
         let direction = extract_direction(part);
-        println!("{}", direction);
+        let distance = extract_distance(part);
+        println!("Direction: {}, with distance: {}", direction, distance);
     }
 
     // println!("begin secret password calculation");
     // let total_zeros = 0;
+}
+
+enum Direction {
+    Left,
+    Right,
 }
 
 fn extract_direction(dir: &str) -> Direction {
@@ -50,12 +56,8 @@ fn extract_direction(dir: &str) -> Direction {
 }
 
 fn extract_distance(dir: &str) -> i16 {
-    return 2;
-}
-
-enum Direction {
-    Left,
-    Right,
+    let slice = &dir[1..];
+    slice.parse::<i16>().unwrap() // apparently we dont ened returns in rust? thats crazy
 }
 
 impl fmt::Display for Direction {
