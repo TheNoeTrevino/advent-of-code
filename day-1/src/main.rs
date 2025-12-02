@@ -4,6 +4,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 fn main() {
+    // https://doc.rust-lang.org/rust-by-example/std_misc/file/open.html
     // Create a path to the desired file
     let path = Path::new("./input.txt");
     let display = path.display();
@@ -23,9 +24,8 @@ fn main() {
 
     let parts = s.split("\n");
 
-    // println!("processing parts into data structure");
-    // TODO: make a list of objects from parts. { direction: Direction, distance: i32 }
-
+    // TODO: now we need to add the distance if it is right, subtract if left
+    // in the for loop, if the number is 0, increment the sum. Idk, read the challange again
     for (i, part) in parts.enumerate() {
         if part.is_empty() {
             continue;
