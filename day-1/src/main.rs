@@ -1,3 +1,4 @@
+use core::fmt;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -24,24 +25,46 @@ fn main() {
 
     // println!("processing parts into data structure");
     // TODO: make a list of objects from parts. { direction: Direction, distance: i32 }
-    for part in parts {
-        println!("processing part: {}", part)
+
+    for (i, part) in parts.enumerate() {
+        if part.is_empty() {
+            continue;
+        }
+
+        println!("processing part #{}: {}", i, part);
+        let direction = extract_direction(part);
+        println!("{}", direction);
     }
 
     // println!("begin secret password calculation");
-    let total_zeros = 0;
+    // let total_zeros = 0;
 }
 
-// TODO: add taking out first character to this
 fn extract_direction(dir: &str) -> Direction {
-    match dir {
-        "L" => Direction::Left,
-        "R" => Direction::Right,
-        &_ => todo!(),
+    let ch = dir.chars().next().unwrap();
+    match ch {
+        'L' => Direction::Left,
+        'R' => Direction::Right,
+        _ => todo!(),
     }
+}
+
+fn extract_distance(dir: &str) -> i16 {
+    return 2;
 }
 
 enum Direction {
     Left,
     Right,
+}
+
+impl fmt::Display for Direction {
+    // need to do this to let the rust print it
+    // https://users.rust-lang.org/t/how-can-i-implement-fmt-display-for-enum/24111
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Direction::Left => write!(f, "L"),
+            Direction::Right => write!(f, "R"),
+        }
+    }
 }
