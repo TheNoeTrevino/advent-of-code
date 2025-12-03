@@ -1,5 +1,6 @@
 use core::fmt;
 use std::fs::File;
+use std::i32;
 use std::io::prelude::*;
 use std::path::Path;
 
@@ -35,24 +36,35 @@ fn main() {
         let direction = extract_direction(part);
         let distance = extract_distance(part);
         println!("Direction: {}, with distance: {}", direction, distance);
-        lock_position = process_lock_movement(lock_position, direction, distance);
-        if lock_position == 0 {
-            total_zeros += 1;
-            println!(
-                "found a zero at position: {}, iteration: {}",
-                lock_position, i
-            );
-        }
+        (lock_position, total_zeros) =
+            process_lock_movement(lock_position, direction, distance, total_zeros);
     }
 
     println!("total zeros found: {}", total_zeros);
 }
 
-fn process_lock_movement(mut lock_position: i32, direction: Direction, distance: i16) -> i32 {
-    lock_position += get_movement_amount(direction, distance); // returned negative for left, positive for right
-    lock_position = lock_position.rem_euclid(100); //https://users.rust-lang.org/t/why-works-differently-between-rust-and-python/83911
+fn process_lock_movement(
+    lock_position: i32,
+    direction: Direction,
+    distance: i16,
+    mut total_zeros: i32,
+) -> (i32, i32) {
+    let movement = get_movement_amount(direction, distance);
+    let new_lock_position = lock_position + movement;
+
+    let zeros_crossed = if movement > 0 {
+        // euclidian division rounds down towards negative infinity
+        // for moving to the right, we want to count how many 100s we crossed. easy version
+        new_lock_position.div_euclid(100)
+    } else {
+        // count euclidian multiples of 100 crossed when moving left
+        (lock_position - 1).div_euclid(100) - (new_lock_position - 1).div_euclid(100)
+    };
+    total_zeros += zeros_crossed.abs();
+
+    let lock_position = new_lock_position.rem_euclid(100);
     println!("lock position: {}", lock_position);
-    lock_position
+    (lock_position, total_zeros)
 }
 
 fn get_movement_amount(direction: Direction, distance: i16) -> i32 {
