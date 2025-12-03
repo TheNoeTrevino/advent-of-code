@@ -1,6 +1,5 @@
 use core::fmt;
 use std::fs::File;
-use std::i32;
 use std::io::prelude::*;
 use std::path::Path;
 
@@ -36,19 +35,22 @@ fn main() {
         let direction = extract_direction(part);
         let distance = extract_distance(part);
         println!("Direction: {}, with distance: {}", direction, distance);
-        lock_position += process_lock_part(lock_position, direction, distance);
+        lock_position = process_lock_movement(lock_position, direction, distance);
         if lock_position == 0 {
             total_zeros += 1;
-            println!("found a zero at position: {}", lock_position);
+            println!(
+                "found a zero at position: {}, iteration: {}",
+                lock_position, i
+            );
         }
     }
 
     println!("total zeros found: {}", total_zeros);
 }
 
-fn process_lock_part(mut lock_position: i32, direction: Direction, distance: i16) -> i32 {
+fn process_lock_movement(mut lock_position: i32, direction: Direction, distance: i16) -> i32 {
     lock_position += get_movement_amount(direction, distance); // returned negative for left, positive for right
-    lock_position %= 100; // is this right for the wrap around? 
+    lock_position = lock_position.rem_euclid(100); //https://users.rust-lang.org/t/why-works-differently-between-rust-and-python/83911
     println!("lock position: {}", lock_position);
     lock_position
 }
